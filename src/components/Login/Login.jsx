@@ -30,12 +30,20 @@ export default function Login() {
             <label>Senha</label>
             <input type="password" placeholder="Digite sua senha" />
 
-            <button type="button" onClick={entrarSistema}>
+            <button id="entrar" type="button" onClick={entrarSistema}>
               Entrar
             </button>
           </form>
 
-          <a href="/cadastro">Realizar Cadastro</a>
+          <a href="/esqueci-senha">Esqueceu a senha?</a>
+
+          <button
+            id="realizar-cadastro"
+            type="button"
+            onClick={() => navigate("/cadastro")}
+          >
+            Realizar Cadastro
+          </button>
         </div>
       </section>
     </div>

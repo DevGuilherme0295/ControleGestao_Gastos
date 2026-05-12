@@ -10,6 +10,7 @@ import ResumoDoDia from "./components/ResumoDoDia/ResumoDoDia";
 import ResumoSemanal from "./components/ResumoSemanal/ResumoSemanal";
 import Cadastro from "./components/Cadastro/Cadastro";
 import DetalheVenda from "./components/DetalheVenda/Detalhes";
+import EsqueciSenha from "./components/EsqueciSenha/EsqueciSenha";
 
 import './index.css'
 
@@ -26,6 +27,7 @@ function App() {
       <Route path="/resumo-semanal" element={<ResumoSemanal />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/detalhe-venda" element={<DetalheVenda />} />
+      <Route path="/esqueci-senha" element={<EsqueciSenha />} />
     </Routes>
   );
 }

@@ -80,7 +80,7 @@
   font-size: 14px;
 }
 
-.login-card button {
+#entrar {
   height: 46px;
   border: none;
   border-radius: 10px;
@@ -91,6 +91,19 @@
   margin-top: 8px;
 }
 
+#realizar-cadastro {
+  display: block;
+  width: 220px;
+  height: 38px;
+  border: 3px solid grey;
+  border-radius: 10px;
+  background: #F5F5F5;
+  color: #0047d8;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 18px auto 0 auto;
+}
+
 .login-card a {
   display: block;
   text-align: center;
@@ -99,3 +112,4 @@
   font-weight: bold;
   font-size: 14px;
 }
+
