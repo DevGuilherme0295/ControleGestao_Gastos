@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "./Estoque.css";
 
 export default function Estoque() {
   const navigate = useNavigate();
 
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState(false);
   return (
     <div className="estoque-page">
       <div className="estoque-container">
@@ -17,6 +20,7 @@ export default function Estoque() {
 
           <form className="estoque-form">
             <input type="text" placeholder="Nome do produto" />
+            <input type="number" placeholder="Preço Unitário" />
             <input type="number" placeholder="Quantidade" />
 
             <select>
@@ -38,8 +42,9 @@ export default function Estoque() {
               <tr>
                 <th>Produto</th>
                 <th>Quantidade</th>
+                <th>Preço Unitário</th>
                 <th>Unidade</th>
-                <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -47,22 +52,73 @@ export default function Estoque() {
               <tr>
                 <td>Tomate</td>
                 <td>25</td>
+                <td>R$ 3,00</td>
                 <td>Kg</td>
-                <td>Disponível</td>
+                <td>
+                  <div className="acoes-buttons">
+                    <button
+                      className="editar-button"
+                      onClick={() => setModalEditar(true)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="excluir-button"
+                      onClick={() => setModalExcluir(true)}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
               </tr>
 
               <tr>
                 <td>Banana</td>
                 <td>8</td>
+                <td>R$ 12,00</td>
                 <td>Kg</td>
-                <td>Baixo estoque</td>
+                <td>
+                  <div className="acoes-buttons">
+                    <button
+                      className="editar-button"
+                      onClick={() => setModalEditar(true)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="excluir-button"
+                      onClick={() => setModalExcluir(true)}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
               </tr>
 
               <tr>
                 <td>Alface</td>
                 <td>15</td>
+                <td>R$ 6,00</td>
                 <td>Maço</td>
-                <td>Disponível</td>
+                <td>
+                  <div className="acoes-buttons">
+                    <button
+                      className="editar-button"
+                      onClick={() => setModalEditar(true)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="excluir-button"
+                      onClick={() => setModalExcluir(true)}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -72,6 +128,50 @@ export default function Estoque() {
           Voltar
         </button>
       </div>
+      {modalEditar && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Editar Produto</h2>
+
+            <input type="text" placeholder="Nome do produto" />
+            <input type="number" placeholder="Quantidade" />
+            <input type="number" placeholder="Preço Unitário" />
+
+            <select>
+              <option>Kg</option>
+              <option>Unidade</option>
+              <option>Caixa</option>
+              <option>Maço</option>
+            </select>
+
+            <div className="modal-buttons">
+              <button onClick={() => setModalEditar(false)}>Cancelar</button>
+
+              <button onClick={() => setModalEditar(false)}>Salvar</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalExcluir && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2>Confirmar Exclusão</h2>
+
+            <p>Tem certeza que deseja excluir este produto do estoque?</p>
+
+            <div className="modal-buttons">
+              <button onClick={() => setModalExcluir(false)}>Cancelar</button>
+
+              <button
+                className="confirmar-exclusao"
+                onClick={() => setModalExcluir(false)}
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

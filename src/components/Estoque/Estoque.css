@@ -44,9 +44,11 @@
 
 .estoque-form {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 140px;
-  gap: 14px;
+  grid-template-columns: 2fr 1.2fr 1fr 1fr 120px;
+  gap: 12px;
+  align-items: center;
 }
+
 
 .estoque-form input,
 .estoque-form select {
@@ -58,11 +60,13 @@
 }
 
 .estoque-form button {
+  height: 44px;
   border: none;
   border-radius: 10px;
   background: #0047d8;
   color: white;
-  font-weight: bold;
+  font-size: large;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -85,6 +89,37 @@ tbody tr {
   border-bottom: 1px solid #4d4d4d;
 }
 
+.acoes-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.editar-button {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 8px;
+  background: #0047d8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.excluir-button {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 8px;
+  background: #b33939;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.excluir-button:hover {
+  background: #e02626;
+}
+
 .voltar-button {
   width: 220px;
   height: 46px;
@@ -94,4 +129,73 @@ tbody tr {
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: 420px;
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+.modal-card h2 {
+  margin-bottom: 20px;
+}
+
+.modal-card input,
+.modal-card select {
+  width: 100%;
+  height: 44px;
+  margin-bottom: 14px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background: #555;
+}
+
+.modal-buttons button:last-child {
+  background: #0047d8;
+}
+
+.modal-card p {
+  color: #cfcfcf;
+  margin-bottom: 22px;
+  line-height: 1.4;
+}
+
+.confirmar-exclusao {
+  background: #b33939 !important;
+}
+
+.confirmar-exclusao:hover {
+  background: #cf2f2f !important;
 }
