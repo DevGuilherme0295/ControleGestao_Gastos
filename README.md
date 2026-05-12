@@ -1,16 +1,35 @@
-# React + Vite
+# Controle e Gestão de Gastos para Feirantes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido para a disciplina de Desenvolvimento em Plataformas Web.
 
-Currently, two official plugins are available:
+## Sobre o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O sistema tem como objetivo auxiliar feirantes no controle financeiro básico do seu negócio, permitindo registrar vendas, gastos e acompanhar o fluxo de caixa de forma simples e organizada.
 
-## React Compiler
+A aplicação foi desenvolvida utilizando React e React Router, seguindo o modelo navegacional solicitado na atividade.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Funcionalidades implementadas
 
-## Expanding the ESLint configuration
+- Tela de Login
+- Menu Principal
+- Registro de Vendas
+- Registro de Gastos / Despesas
+- Fluxo de Caixa
+- Controle de Estoque
+- Resumo do Dia
+- Resumo Semanal
+- Navegação entre páginas utilizando React Router
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tecnologias utilizadas
+
+- React
+- Vite
+- React Router DOM
+- CSS
+
+## Objetivo acadêmico
+
+O projeto foi desenvolvido com foco na implementação do modelo navegacional da aplicação, simulando o fluxo de uso do sistema sem integração com banco de dados ou regras de negócio complexas.
+
+
+
