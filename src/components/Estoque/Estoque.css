@@ -1,0 +1,97 @@
+.estoque-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #242424;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  padding: 40px;
+}
+
+.estoque-container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.estoque-header {
+  margin-bottom: 28px;
+  color: white;
+}
+
+.estoque-header h1 {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.estoque-header p {
+  color: #bfbfbf;
+}
+
+.estoque-card,
+.estoque-lista {
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.estoque-card h2,
+.estoque-lista h2 {
+  margin-bottom: 20px;
+}
+
+.estoque-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 140px;
+  gap: 14px;
+}
+
+.estoque-form input,
+.estoque-form select {
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.estoque-form button {
+  border: none;
+  border-radius: 10px;
+  background: #0047d8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #3d3d3d;
+}
+
+th,
+td {
+  padding: 14px;
+  text-align: left;
+}
+
+tbody tr {
+  border-bottom: 1px solid #4d4d4d;
+}
+
+.voltar-button {
+  width: 220px;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
