@@ -8,6 +8,8 @@ import FluxoCaixa from "./components/FluxoCaixa/FluxoCaixa";
 import Estoque from "./components/Estoque/Estoque";
 import ResumoDoDia from "./components/ResumoDoDia/ResumoDoDia";
 import ResumoSemanal from "./components/ResumoSemanal/ResumoSemanal";
+import Cadastro from "./components/Cadastro/Cadastro";
+import DetalheVenda from "./components/DetalheVenda/Detalhes";
 
 import './index.css'
 
@@ -22,6 +24,8 @@ function App() {
       <Route path="/estoque" element={<Estoque />} />
       <Route path="/resumo-dia" element={<ResumoDoDia />} />
       <Route path="/resumo-semanal" element={<ResumoSemanal />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/detalhe-venda" element={<DetalheVenda />} />
     </Routes>
   );
 }

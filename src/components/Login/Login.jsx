@@ -35,7 +35,7 @@ export default function Login() {
             </button>
           </form>
 
-          <a href="/">Realizar Cadastro</a>
+          <a href="/cadastro">Realizar Cadastro</a>
         </div>
       </section>
     </div>

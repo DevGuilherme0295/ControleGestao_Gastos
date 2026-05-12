@@ -89,6 +89,27 @@ td {
   text-align: left;
 }
 
+td button {
+  height: 36px;
+  padding: 0 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #0047d8;
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+td button:hover {
+  background: #0b5cff;
+}
+
 tbody tr {
   border-bottom: 1px solid #4d4d4d;
 }

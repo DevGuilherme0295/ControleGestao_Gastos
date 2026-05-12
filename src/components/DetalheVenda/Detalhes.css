@@ -1,0 +1,78 @@
+.detalhe-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #242424;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
+
+.detalhe-card {
+  width: 620px;
+  background: #323232;
+  padding: 36px;
+  border-radius: 18px;
+  color: white;
+}
+
+.detalhe-card h1 {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.detalhe-card p {
+  color: #bfbfbf;
+  margin-bottom: 28px;
+}
+
+.detalhe-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detalhe-info div {
+  background: #3d3d3d;
+  padding: 16px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.detalhe-info strong {
+  color: white;
+}
+
+.detalhe-info span {
+  color: #d6d6d6;
+}
+
+.detalhe-buttons {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.detalhe-buttons button {
+  flex: 1;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.detalhe-buttons button:first-child {
+  background: #555;
+}
+
+.detalhe-buttons button:nth-child(2) {
+  background: #0047d8;
+}
+
+.detalhe-buttons button:last-child {
+  background: #b33939;
+}
