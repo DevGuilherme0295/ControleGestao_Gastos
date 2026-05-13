@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { HouseIcon } from "lucide-react";
 import "./Login.css";
 
 export default function Login() {
@@ -12,7 +13,9 @@ export default function Login() {
     <div className="login-page">
       <section className="login-banner">
         <div className="logo-box">
-          <div className="logo-symbol">⌂</div>
+          <div className="logo-symbol">
+            <HouseIcon size={50} strokeWidth={1.5}/>  
+          </div>
           <h1>Feira-Livre</h1>
           <p>Sistema de Controle e Gestão de Gastos</p>
         </div>

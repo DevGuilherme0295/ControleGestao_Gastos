@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import logoutIcon from "../../images/logout.png";
+import { LogOut } from 'lucide-react';
+
 
 import "./Menu.css";
 
@@ -10,7 +11,7 @@ export default function Menu() {
     <div className="menu-page">
       
       <button className="logout-icon-button" onClick={() => navigate("/")}>
-        <img src={logoutIcon} alt="Deslogar" />
+        <LogOut color="#ffffff" strokeWidth={3}/>
       </button>
 
       <h1 className="menu-title">Menu Principal</h1>
