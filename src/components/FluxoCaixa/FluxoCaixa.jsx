@@ -33,7 +33,7 @@ export default function FluxoCaixa() {
         </div>
 
         <div className="movimentacoes-box">
-          <h2>Últimas movimentações</h2>
+          <h2>Movimentações</h2>
 
           <table>
             <thead>

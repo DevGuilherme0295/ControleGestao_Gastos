@@ -76,3 +76,78 @@
 .detalhe-buttons button:last-child {
   background: #b33939;
 }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: 420px;
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+.modal-card h2 {
+  margin-bottom: 20px;
+}
+
+.modal-card p {
+  color: #cfcfcf;
+  margin-bottom: 22px;
+}
+
+.modal-card input {
+  width: 100%;
+  height: 44px;
+  margin-bottom: 14px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background: #555;
+}
+
+.modal-buttons button:last-child {
+  background: #0047d8;
+}
+
+.confirmar-exclusao {
+  background: #b33939 !important;
+}
+
+.modal-campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.modal-campo label {
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 14px;
+}

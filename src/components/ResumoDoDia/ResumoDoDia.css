@@ -125,3 +125,27 @@ tbody tr {
   font-weight: bold;
   cursor: pointer;
 }
+
+.tipo-entrada {
+  background: #1f7a45;
+  color: white;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.tipo-saida {
+  background: #a33434;
+  color: white;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: bold;
+}

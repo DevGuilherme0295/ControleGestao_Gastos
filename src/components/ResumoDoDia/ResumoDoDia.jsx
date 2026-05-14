@@ -1,8 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./ResumoDoDia.css";
 
 export default function ResumoDoDia() {
   const navigate = useNavigate();
+
+  const [movimentacoes, setMovimentacoes] = useState([]);
+
+  useEffect(() => {
+    const movimentacoesSalvas =
+      JSON.parse(localStorage.getItem("movimentacoes")) || [];
+
+    setMovimentacoes(movimentacoesSalvas);
+  }, []);
+
+  const totalEntradas = movimentacoes
+    .filter((movimentacao) => movimentacao.tipo === "Entrada")
+    .reduce((total, movimentacao) => total + Number(movimentacao.valor), 0);
+
+  const totalSaidas = movimentacoes
+    .filter((movimentacao) => movimentacao.tipo === "Saída")
+    .reduce((total, movimentacao) => total + Number(movimentacao.valor), 0);
+
+  const lucroDia = totalEntradas - totalSaidas;
 
   return (
     <div className="resumo-page">
@@ -15,17 +35,17 @@ export default function ResumoDoDia() {
         <div className="resumo-cards">
           <div className="resumo-card entrada">
             <h2>Total de Entradas</h2>
-            <span>R$ 1.850,00</span>
+            <span>R$ {totalEntradas.toFixed(2)}</span>
           </div>
 
           <div className="resumo-card saida">
             <h2>Total de Saídas</h2>
-            <span>R$ 620,00</span>
+            <span>R$ {totalSaidas.toFixed(2)}</span>
           </div>
 
           <div className="resumo-card saldo">
             <h2>Lucro do Dia</h2>
-            <span>R$ 1.230,00</span>
+            <span>R$ {lucroDia.toFixed(2)}</span>
           </div>
         </div>
 
@@ -38,71 +58,36 @@ export default function ResumoDoDia() {
                 <th>Tipo</th>
                 <th>Descrição</th>
                 <th>Valor</th>
-                <th>Horário</th>
+                <th>Data</th>
                 <th>Ação</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td>Entrada</td>
-                <td>Venda de banana</td>
-                <td>R$ 120,00</td>
-                <td>08:15</td>
-                <td>
-                  <button className="detalhes-button" onClick={() => 
-                  navigate("/detalhe-venda", {state: { tipo: "Entrada" }})
-                    }
-                  >
-                    Ver detalhes
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Saída</td>
-                <td>Compra de sacolas</td>
-                <td>R$ 35,00</td>
-                <td>09:40</td>
-                <td>
-                  <button className="detalhes-button" onClick={() => 
-                  navigate("/detalhe-venda", {state: { tipo: "Saída" }})
-                    }
-                  >
-                    Ver detalhes
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Entrada</td>
-                <td>Venda de tomate</td>
-                <td>R$ 210,00</td>
-                <td>11:10</td>
-                <td>
-                  <button className="detalhes-button" onClick={() => 
-                  navigate("/detalhe-venda", {state: { tipo: "Entrada" }})
-                    }
-                  >
-                    Ver detalhes
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Saída</td>
-                <td>Gasolina</td>
-                <td>R$ 70,00</td>
-                <td>12:30</td>
-                <td>
-                  <button className="detalhes-button" onClick={() => 
-                  navigate("/detalhe-venda", {state: { tipo: "Saída" }})
-                    }
-                  >
-                    Ver detalhes
-                  </button>
-                </td>
-              </tr>
+              {movimentacoes.map((movimentacao, index) => (
+                <tr key={index}>
+                  <td>
+                    <span className={ movimentacao.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
+                      {movimentacao.tipo}
+                    </span>
+                  </td>
+                  <td>{movimentacao.descricao}</td>
+                  <td>R$ {movimentacao.valor}</td>
+                  <td>{movimentacao.data}</td>
+                  <td>
+                    <button
+                      className="detalhes-button"
+                      onClick={() =>
+                        navigate("/detalhe-venda", {
+                          state: movimentacao,
+                        })
+                      }
+                    >
+                      Ver detalhes
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
