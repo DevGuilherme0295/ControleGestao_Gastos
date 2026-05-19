@@ -26,7 +26,6 @@ export default function RegistroVendas() {
     };
 
     const movimentacoesSalvas = JSON.parse(localStorage.getItem("movimentacoes")) || [];
-
     const movimentacoesAtualizadas = [...movimentacoesSalvas, novaVenda];
 
     localStorage.setItem( "movimentacoes", JSON.stringify(movimentacoesAtualizadas),);

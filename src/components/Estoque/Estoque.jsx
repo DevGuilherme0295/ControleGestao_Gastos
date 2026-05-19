@@ -1,12 +1,48 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Estoque.css";
 
 export default function Estoque() {
   const navigate = useNavigate();
 
+  const [produto, setProduto] = useState("");
+  const [precoUni, setPrecoUni] = useState("");
+  const [quantidade, setQuantidade] = useState("");
+  const [unidade, setUnidade] = useState("Kg");
+
   const [modalEditar, setModalEditar] = useState(false);
   const [modalExcluir, setModalExcluir] = useState(false);
+
+  function registrarProduto(){
+    const novoProduto = {
+      produto,
+      quantidade,
+      precoUni,
+      unidade
+    };
+
+    const produtosSalvos = JSON.parse(localStorage.getItem("estoque")) || [];
+    const produtosAtualizados = [...produtosSalvos, novoProduto];
+
+    localStorage.setItem( "estoque", JSON.stringify(movimentacoesAtualizadas),);
+
+    alert("Produto cadastrado com sucesso!");
+
+    setProduto("");
+    setQuantidade("");
+    setPrecoUni("");
+    setUnidade("Kg");
+  }
+
+  const [estoque, setEstoque] = useState([]);
+
+  useEffect(() => {
+    const estoqueSalvo =
+      JSON.parse(localStorage.getItem("estoque")) || [];
+
+    setMovimentacoes(estoqueSalvo);
+  }, []);
+
   return (
     <div className="estoque-page">
       <div className="estoque-container">
@@ -49,77 +85,14 @@ export default function Estoque() {
             </thead>
 
             <tbody>
-              <tr>
-                <td>Tomate</td>
-                <td>25</td>
-                <td>R$ 3,00</td>
-                <td>Kg</td>
-                <td>
-                  <div className="acoes-buttons">
-                    <button
-                      className="editar-button"
-                      onClick={() => setModalEditar(true)}
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      className="excluir-button"
-                      onClick={() => setModalExcluir(true)}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Banana</td>
-                <td>8</td>
-                <td>R$ 12,00</td>
-                <td>Kg</td>
-                <td>
-                  <div className="acoes-buttons">
-                    <button
-                      className="editar-button"
-                      onClick={() => setModalEditar(true)}
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      className="excluir-button"
-                      onClick={() => setModalExcluir(true)}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>Alface</td>
-                <td>15</td>
-                <td>R$ 6,00</td>
-                <td>Maço</td>
-                <td>
-                  <div className="acoes-buttons">
-                    <button
-                      className="editar-button"
-                      onClick={() => setModalEditar(true)}
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      className="excluir-button"
-                      onClick={() => setModalExcluir(true)}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              {estoque.map((estoque, index) => (
+                <tr key = {index}>
+                  <td>{estoque.produto}</td>
+                  <td>{estoque.quantidade}</td>
+                  <td>{estoque.precoUni}</td>
+                  <td>{estoque.unidade}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
