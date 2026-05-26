@@ -70,3 +70,23 @@
 .vendas-buttons button:last-child {
   background: #0047d8;
 }
+
+.estoque-info {
+  margin-top: -10px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #a0c4ff;
+}
+
+.erro-msg { 
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px; 
+  font-size: 13px;
+  color: white;
+  background-color: #ff6b6b;
+  font-weight: bold;
+  border-radius: 8px;
+}
