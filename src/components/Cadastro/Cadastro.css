@@ -69,3 +69,10 @@
 .cadastro-buttons button:last-child {
   background: #0047d8;
 }
+
+.erro-msg {
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}

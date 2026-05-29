@@ -1,8 +1,74 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./FluxoCaixa.css";
+
+const MESES = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
+
+function formatarDataExibicao(dataISO) {
+  if (!dataISO) return "—";
+  return dataISO.split("-").reverse().join("/");
+}
+
+function labelMes(anoMes) {
+  const [ano, mes] = anoMes.split("-");
+  return `${MESES[Number(mes) - 1]} ${ano}`;
+}
 
 export default function FluxoCaixa() {
   const navigate = useNavigate();
+
+  const [todasMovimentacoes, setTodasMovimentacoes] = useState([]);
+  const [mesSelecionado, setMesSelecionado] = useState("todos");
+
+  useEffect(() => {
+    const salvas = JSON.parse(localStorage.getItem("movimentacoes")) || [];
+    setTodasMovimentacoes(salvas);
+  }, []);
+
+  // Meses disponíveis extraídos dos dados reais
+  const mesesDisponiveis = [
+    ...new Set(
+      todasMovimentacoes
+        .filter((m) => m.data)
+        .map((m) => m.data.slice(0, 7))
+    ),
+  ].sort((a, b) => (a < b ? 1 : -1));
+
+  const movimentacoesFiltradas =
+    mesSelecionado === "todos"
+      ? todasMovimentacoes
+      : todasMovimentacoes.filter((m) => m.data?.startsWith(mesSelecionado));
+
+  const totalEntradas = movimentacoesFiltradas
+    .filter((m) => m.tipo === "Entrada")
+    .reduce((acc, m) => acc + Number(m.valor), 0);
+
+  const totalSaidas = movimentacoesFiltradas
+    .filter((m) => m.tipo === "Saída")
+    .reduce((acc, m) => acc + Number(m.valor), 0);
+
+  const saldoFinal = totalEntradas - totalSaidas;
+
+  // Ordena do mais antigo para o mais novo e calcula saldo corrente
+  const ordenadas = [...movimentacoesFiltradas].sort((a, b) =>
+    a.data > b.data ? 1 : a.data < b.data ? -1 : 0
+  );
+
+  let saldoCorrido = 0;
+  const comSaldo = ordenadas.map((m) => {
+    if (m.tipo === "Entrada") {
+      saldoCorrido += Number(m.valor);
+    } else {
+      saldoCorrido -= Number(m.valor);
+    }
+    return { ...m, saldoApos: saldoCorrido };
+  });
+
+  // Inverte para exibir o mais recente primeiro
+  const paraExibir = [...comSaldo].reverse();
 
   return (
     <div className="fluxo-page">
@@ -10,26 +76,37 @@ export default function FluxoCaixa() {
 
         <div className="fluxo-header">
           <h1>Fluxo de Caixa</h1>
-          <p>Resumo financeiro das movimentações do negócio.</p>
+          <p>Evolução do saldo ao longo das movimentações.</p>
+
+          <select
+            className="fluxo-filtro"
+            value={mesSelecionado}
+            onChange={(e) => setMesSelecionado(e.target.value)}
+          >
+            <option value="todos">Todos os períodos</option>
+            {mesesDisponiveis.map((m) => (
+              <option key={m} value={m}>
+                {labelMes(m)}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="fluxo-cards">
-
           <div className="fluxo-card entrada">
-            <h2>Entradas</h2>
-            <span>R$ 2.450,00</span>
+            <h2>Total Entradas</h2>
+            <span>R$ {totalEntradas.toFixed(2)}</span>
           </div>
 
           <div className="fluxo-card saida">
-            <h2>Saídas</h2>
-            <span>R$ 980,00</span>
+            <h2>Total Saídas</h2>
+            <span>R$ {totalSaidas.toFixed(2)}</span>
           </div>
 
           <div className="fluxo-card saldo">
-            <h2>Saldo Atual</h2>
-            <span>R$ 1.470,00</span>
+            <h2>Saldo Final</h2>
+            <span>R$ {saldoFinal.toFixed(2)}</span>
           </div>
-
         </div>
 
         <div className="movimentacoes-box">
@@ -38,42 +115,43 @@ export default function FluxoCaixa() {
           <table>
             <thead>
               <tr>
+                <th>Data</th>
                 <th>Tipo</th>
                 <th>Descrição</th>
                 <th>Valor</th>
-                <th>Data</th>
+                <th>Saldo</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td>Entrada</td>
-                <td>Venda de tomate</td>
-                <td>R$ 120,00</td>
-                <td>12/05/2026</td>
-              </tr>
-
-              <tr>
-                <td>Saída</td>
-                <td>Compra de mercadoria</td>
-                <td>R$ 80,00</td>
-                <td>12/05/2026</td>
-              </tr>
-
-              <tr>
-                <td>Entrada</td>
-                <td>Venda de banana</td>
-                <td>R$ 210,00</td>
-                <td>11/05/2026</td>
-              </tr>
+              {paraExibir.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="fluxo-vazio">
+                    Nenhuma movimentação encontrada.
+                  </td>
+                </tr>
+              ) : (
+                paraExibir.map((m) => (
+                  <tr key={m.id}>
+                    <td>{formatarDataExibicao(m.data)}</td>
+                    <td>
+                      <span className={m.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
+                        {m.tipo}
+                      </span>
+                    </td>
+                    <td>{m.descricao}</td>
+                    <td>R$ {Number(m.valor).toFixed(2)}</td>
+                    <td className={m.saldoApos >= 0 ? "saldo-positivo" : "saldo-negativo"}>
+                      R$ {m.saldoApos.toFixed(2)}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        <button
-          className="voltar-button"
-          onClick={() => navigate("/menu")}
-        >
+        <button className="voltar-button" onClick={() => navigate("/menu")}>
           Voltar
         </button>
 

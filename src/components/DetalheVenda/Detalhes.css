@@ -151,3 +151,10 @@
   font-weight: bold;
   font-size: 14px;
 }
+
+.erro-msg {
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HouseIcon } from "lucide-react";
 import "./Login.css";
@@ -5,7 +6,31 @@ import "./Login.css";
 export default function Login() {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+
   function entrarSistema() {
+    if (!email || !senha) {
+      setErro("Preencha o e-mail e a senha.");
+      return;
+    }
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    const usuario = usuarios.find((u) => u.email === email);
+
+    if (!usuario) {
+      setErro("E-mail não encontrado. Verifique ou realize o cadastro.");
+      return;
+    }
+
+    if (usuario.senha !== senha) {
+      setErro("Senha incorreta. Tente novamente.");
+      return;
+    }
+
+    setErro("");
     navigate("/menu");
   }
 
@@ -14,7 +39,7 @@ export default function Login() {
       <section className="login-banner">
         <div className="logo-box">
           <div className="logo-symbol">
-            <HouseIcon size={50} strokeWidth={1.5}/>  
+            <HouseIcon size={50} strokeWidth={1.5} />
           </div>
           <h1>Feira-Livre</h1>
           <p>Sistema de Controle e Gestão de Gastos</p>
@@ -28,10 +53,22 @@ export default function Login() {
 
           <form>
             <label>E-mail</label>
-            <input type="email" placeholder="Digite seu e-mail" />
+            <input
+              type="email"
+              placeholder="Digite seu e-mail"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setErro(""); }}
+            />
 
             <label>Senha</label>
-            <input type="password" placeholder="Digite sua senha" />
+            <input
+              type="password"
+              placeholder="Digite sua senha"
+              value={senha}
+              onChange={(e) => { setSenha(e.target.value); setErro(""); }}
+            />
+
+            {erro && <p className="erro-msg">{erro}</p>}
 
             <button id="entrar" type="button" onClick={entrarSistema}>
               Entrar

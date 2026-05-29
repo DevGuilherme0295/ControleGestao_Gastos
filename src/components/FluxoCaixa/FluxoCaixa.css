@@ -26,6 +26,43 @@
 
 .fluxo-header p {
   color: #bfbfbf;
+  margin-bottom: 16px;
+}
+
+.fluxo-filtro {
+  height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 10px;
+  background: #323232;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fluxo-vazio {
+  text-align: center;
+  color: #888;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+.tipo-entrada {
+  background: #1f7a45;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.tipo-saida {
+  background: #a33434;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .fluxo-cards {
@@ -103,4 +140,14 @@ tbody tr {
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+.saldo-positivo {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.saldo-negativo {
+  color: #f44336;
+  font-weight: bold;
 }

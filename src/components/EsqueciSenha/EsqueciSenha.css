@@ -64,3 +64,32 @@
 .senha-form button:last-of-type {
   background: #555;
 }
+
+.btn-primario {
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #0047d8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.btn-secundario {
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.erro-msg {
+  color: #e53935;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}

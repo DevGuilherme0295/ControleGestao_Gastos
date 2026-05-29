@@ -5,14 +5,20 @@ import "./ResumoDoDia.css";
 export default function ResumoDoDia() {
   const navigate = useNavigate();
 
-  const [movimentacoes, setMovimentacoes] = useState([]);
+  const hoje = new Date().toISOString().split("T")[0];
+
+  const [todasMovimentacoes, setTodasMovimentacoes] = useState([]);
+  const [dataSelecionada, setDataSelecionada] = useState(hoje);
 
   useEffect(() => {
     const movimentacoesSalvas =
       JSON.parse(localStorage.getItem("movimentacoes")) || [];
-
-    setMovimentacoes(movimentacoesSalvas);
+    setTodasMovimentacoes(movimentacoesSalvas);
   }, []);
+
+  const movimentacoes = todasMovimentacoes.filter(
+    (m) => m.data === dataSelecionada
+  );
 
   const totalEntradas = movimentacoes
     .filter((movimentacao) => movimentacao.tipo === "Entrada")
@@ -30,6 +36,12 @@ export default function ResumoDoDia() {
         <div className="resumo-header">
           <h1>Resumo do Dia</h1>
           <p>Visualização rápida das movimentações do dia.</p>
+          <input
+            type="date"
+            className="resumo-data"
+            value={dataSelecionada}
+            onChange={(e) => setDataSelecionada(e.target.value)}
+          />
         </div>
 
         <div className="resumo-cards">
@@ -64,30 +76,38 @@ export default function ResumoDoDia() {
             </thead>
 
             <tbody>
-              {movimentacoes.map((movimentacao, index) => (
-                <tr key={index}>
-                  <td>
-                    <span className={ movimentacao.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
-                      {movimentacao.tipo}
-                    </span>
-                  </td>
-                  <td>{movimentacao.descricao}</td>
-                  <td>R$ {movimentacao.valor}</td>
-                  <td>{movimentacao.data}</td>
-                  <td>
-                    <button
-                      className="detalhes-button"
-                      onClick={() =>
-                        navigate("/detalhe-venda", {
-                          state: movimentacao,
-                        })
-                      }
-                    >
-                      Ver detalhes
-                    </button>
+              {movimentacoes.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="lista-vazia">
+                    Nenhuma movimentação encontrada para este dia.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                movimentacoes.map((movimentacao, index) => (
+                  <tr key={index}>
+                    <td>
+                      <span className={movimentacao.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
+                        {movimentacao.tipo}
+                      </span>
+                    </td>
+                    <td>{movimentacao.descricao}</td>
+                    <td>R$ {Number(movimentacao.valor).toFixed(2)}</td>
+                    <td>{movimentacao.data.split("-").reverse().join("/")}</td>
+                    <td>
+                      <button
+                        className="detalhes-button"
+                        onClick={() =>
+                          navigate("/detalhe-venda", {
+                            state: movimentacao,
+                          })
+                        }
+                      >
+                        Ver detalhes
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

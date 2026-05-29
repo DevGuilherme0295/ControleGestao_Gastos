@@ -1,8 +1,52 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cadastro.css";
 
 export default function Cadastro() {
   const navigate = useNavigate();
+
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [erro, setErro] = useState("");
+
+  function cadastrar() {
+    if (!nome || !email || !senha || !confirmarSenha) {
+      setErro("Preencha todos os campos.");
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      setErro("As senhas não coincidem.");
+      return;
+    }
+
+    if (senha.length < 6) {
+      setErro("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    const emailJaExiste = usuarios.some((u) => u.email === email);
+    if (emailJaExiste) {
+      setErro("Já existe uma conta com esse e-mail.");
+      return;
+    }
+
+    const novoUsuario = {
+      id: Date.now(),
+      nome,
+      email,
+      senha,
+    };
+
+    localStorage.setItem("usuarios", JSON.stringify([...usuarios, novoUsuario]));
+
+    setErro("");
+    navigate("/menu");
+  }
 
   return (
     <div className="cadastro-page">
@@ -12,23 +56,45 @@ export default function Cadastro() {
 
         <form className="cadastro-form">
           <label>Nome completo</label>
-          <input type="text" placeholder="Digite seu nome" />
+          <input
+            type="text"
+            placeholder="Digite seu nome"
+            value={nome}
+            onChange={(e) => { setNome(e.target.value); setErro(""); }}
+          />
 
           <label>E-mail</label>
-          <input type="email" placeholder="Digite seu e-mail" />
+          <input
+            type="email"
+            placeholder="Digite seu e-mail"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); setErro(""); }}
+          />
 
           <label>Senha</label>
-          <input type="password" placeholder="Digite sua senha" />
+          <input
+            type="password"
+            placeholder="Mínimo 6 caracteres"
+            value={senha}
+            onChange={(e) => { setSenha(e.target.value); setErro(""); }}
+          />
 
           <label>Confirmar senha</label>
-          <input type="password" placeholder="Confirme sua senha" />
+          <input
+            type="password"
+            placeholder="Repita a senha"
+            value={confirmarSenha}
+            onChange={(e) => { setConfirmarSenha(e.target.value); setErro(""); }}
+          />
+
+          {erro && <p className="erro-msg">{erro}</p>}
 
           <div className="cadastro-buttons">
             <button type="button" onClick={() => navigate("/")}>
               Voltar
             </button>
 
-            <button type="button" onClick={() => navigate("/menu")}>
+            <button type="button" onClick={cadastrar}>
               Cadastrar
             </button>
           </div>

@@ -26,6 +26,53 @@
 
 .semanal-header p {
   color: #bfbfbf;
+  margin-bottom: 16px;
+}
+
+.semana-navegacao {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.semana-navegacao button {
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.semana-navegacao button:hover:not(.btn-desabilitado) {
+  background: #555;
+}
+
+.btn-desabilitado {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.semana-periodo {
+  font-size: 15px;
+  color: #a0c4ff;
+  font-weight: bold;
+}
+
+.sem-dados {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin: 32px 0;
+}
+
+.sem-info {
+  color: #666 !important;
+  font-size: 24px !important;
 }
 
 .semanal-cards {

@@ -22,17 +22,69 @@ export default function DetalheVenda() {
   const [vendaAtual, setVendaAtual] = useState(vendaRecebida);
   const [modalEditar, setModalEditar] = useState(false);
   const [modalExcluir, setModalExcluir] = useState(false);
+  const [erro, setErro] = useState("");
 
   const [produtoEditado, setProdutoEditado] = useState(vendaRecebida.produto);
-  const [quantidadeEditada, setQuantidadeEditada] = useState(
-    vendaRecebida.quantidade,
-  );
+  const [quantidadeEditada, setQuantidadeEditada] = useState(vendaRecebida.quantidade);
   const [valorEditado, setValorEditado] = useState(vendaRecebida.valor);
   const [dataEditada, setDataEditada] = useState(vendaRecebida.data);
 
+  function ajustarEstoqueEdicao(qtdAntiga, qtdNova, nomeProduto) {
+    const delta = parseFloat(qtdNova) - parseFloat(qtdAntiga);
+    if (delta === 0) return true;
+
+    const estoqueAtual = JSON.parse(localStorage.getItem("estoque")) || [];
+    const idx = estoqueAtual.findIndex((i) => i.produto === nomeProduto);
+
+    if (idx === -1) return true; // produto não está no estoque, ignora
+
+    const qtdEstoque = parseFloat(estoqueAtual[idx].quantidade) || 0;
+
+    if (delta > 0 && delta > qtdEstoque) {
+      setErro(
+        `Estoque insuficiente para esta edição. Disponível: ${qtdEstoque} ${estoqueAtual[idx].unidade}`
+      );
+      return false;
+    }
+
+    estoqueAtual[idx] = {
+      ...estoqueAtual[idx],
+      quantidade: qtdEstoque - delta,
+    };
+    localStorage.setItem("estoque", JSON.stringify(estoqueAtual));
+    return true;
+  }
+
+  function ajustarEstoqueExclusao(quantidade, nomeProduto) {
+    const qtdDevolver = parseFloat(quantidade) || 0;
+    if (qtdDevolver === 0) return;
+
+    const estoqueAtual = JSON.parse(localStorage.getItem("estoque")) || [];
+    const idx = estoqueAtual.findIndex((i) => i.produto === nomeProduto);
+
+    if (idx === -1) return; // produto não está no estoque, ignora
+
+    estoqueAtual[idx] = {
+      ...estoqueAtual[idx],
+      quantidade: parseFloat(estoqueAtual[idx].quantidade) + qtdDevolver,
+    };
+    localStorage.setItem("estoque", JSON.stringify(estoqueAtual));
+  }
+
   function salvarEdicao() {
+    // Se for Entrada (venda), ajusta o estoque antes de salvar
+    if (vendaAtual.tipo === "Entrada") {
+      const ok = ajustarEstoqueEdicao(
+        vendaAtual.quantidade,
+        quantidadeEditada,
+        vendaAtual.produto
+      );
+      if (!ok) return;
+    }
+
     const movimentacoesSalvas =
       JSON.parse(localStorage.getItem("movimentacoes")) || [];
+
     const vendaEditada = {
       ...vendaAtual,
       produto: produtoEditado,
@@ -42,35 +94,31 @@ export default function DetalheVenda() {
       data: dataEditada,
     };
 
-    const movimentacoesAtualizadas = movimentacoesSalvas.map((movimentacao) => {
-      if (movimentacao.id === vendaAtual.id) {
-        return vendaEditada;
-      }
-
-      return movimentacao;
-    });
-
-    localStorage.setItem(
-      "movimentacoes",
-      JSON.stringify(movimentacoesAtualizadas),
+    const movimentacoesAtualizadas = movimentacoesSalvas.map((m) =>
+      m.id === vendaAtual.id ? vendaEditada : m
     );
 
+    localStorage.setItem("movimentacoes", JSON.stringify(movimentacoesAtualizadas));
+
     setVendaAtual(vendaEditada);
+    setErro("");
     setModalEditar(false);
   }
 
   function excluirVenda() {
+    // Se for Entrada (venda), devolve a quantidade ao estoque
+    if (vendaAtual.tipo === "Entrada") {
+      ajustarEstoqueExclusao(vendaAtual.quantidade, vendaAtual.produto);
+    }
+
     const movimentacoesSalvas =
       JSON.parse(localStorage.getItem("movimentacoes")) || [];
 
     const movimentacoesAtualizadas = movimentacoesSalvas.filter(
-      (movimentacao) => movimentacao.id !== vendaAtual.id,
+      (m) => m.id !== vendaAtual.id
     );
 
-    localStorage.setItem(
-      "movimentacoes",
-      JSON.stringify(movimentacoesAtualizadas),
-    );
+    localStorage.setItem("movimentacoes", JSON.stringify(movimentacoesAtualizadas));
 
     setModalExcluir(false);
     navigate("/resumo-dia");
@@ -87,34 +135,26 @@ export default function DetalheVenda() {
             <strong>Tipo:</strong>
             <span>{vendaAtual.tipo}</span>
           </div>
-
           <div>
             <strong>Descrição:</strong>
             <span>{vendaAtual.descricao}</span>
           </div>
-
           <div>
             <strong>Produto:</strong>
             <span>{vendaAtual.produto}</span>
           </div>
-
           <div>
             <strong>Quantidade:</strong>
-            <span>
-              {vendaAtual.quantidade} {vendaAtual.unidade}
-            </span>
+            <span>{vendaAtual.quantidade} {vendaAtual.unidade}</span>
           </div>
-
           <div>
             <strong>Valor:</strong>
             <span>R$ {vendaAtual.valor}</span>
           </div>
-
           <div>
             <strong>Pagamento:</strong>
             <span>{vendaAtual.pagamento}</span>
           </div>
-
           <div>
             <strong>Data:</strong>
             <span>{vendaAtual.data}</span>
@@ -123,7 +163,7 @@ export default function DetalheVenda() {
 
         <div className="detalhe-buttons">
           <button onClick={() => navigate("/resumo-dia")}>Voltar</button>
-          <button onClick={() => setModalEditar(true)}>Editar</button>
+          <button onClick={() => { setErro(""); setModalEditar(true); }}>Editar</button>
           <button onClick={() => setModalExcluir(true)}>Excluir</button>
         </div>
       </div>
@@ -132,11 +172,14 @@ export default function DetalheVenda() {
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>Confirmar Exclusão</h2>
-            <p>Tem certeza que deseja excluir esta movimentação?</p>
-
+            <p>
+              Tem certeza que deseja excluir esta movimentação?
+              {vendaAtual.tipo === "Entrada" && vendaAtual.produto && (
+                <><br /><strong>{vendaAtual.quantidade} {vendaAtual.unidade}</strong> de <strong>{vendaAtual.produto}</strong> serão devolvidos ao estoque.</>
+              )}
+            </p>
             <div className="modal-buttons">
               <button onClick={() => setModalExcluir(false)}>Cancelar</button>
-
               <button className="confirmar-exclusao" onClick={excluirVenda}>
                 Excluir
               </button>
@@ -152,7 +195,6 @@ export default function DetalheVenda() {
 
             <div className="modal-campo">
               <label>Produto:</label>
-
               <input
                 type="text"
                 value={produtoEditado}
@@ -162,17 +204,15 @@ export default function DetalheVenda() {
 
             <div className="modal-campo">
               <label>Quantidade:</label>
-
               <input
                 type="number"
                 value={quantidadeEditada}
-                onChange={(e) => setQuantidadeEditada(e.target.value)}
+                onChange={(e) => { setQuantidadeEditada(e.target.value); setErro(""); }}
               />
             </div>
 
             <div className="modal-campo">
               <label>Valor:</label>
-
               <input
                 type="number"
                 value={valorEditado}
@@ -182,7 +222,6 @@ export default function DetalheVenda() {
 
             <div className="modal-campo">
               <label>Data:</label>
-
               <input
                 type="date"
                 value={dataEditada}
@@ -190,8 +229,10 @@ export default function DetalheVenda() {
               />
             </div>
 
+            {erro && <p className="erro-msg">{erro}</p>}
+
             <div className="modal-buttons">
-              <button onClick={() => setModalEditar(false)}>Cancelar</button>
+              <button onClick={() => { setModalEditar(false); setErro(""); }}>Cancelar</button>
               <button onClick={salvarEdicao}>Salvar</button>
             </div>
           </div>
