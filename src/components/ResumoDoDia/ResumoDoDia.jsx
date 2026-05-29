@@ -5,7 +5,8 @@ import "./ResumoDoDia.css";
 export default function ResumoDoDia() {
   const navigate = useNavigate();
 
-  const hoje = new Date().toISOString().split("T")[0];
+  const agora = new Date();
+  const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}-${String(agora.getDate()).padStart(2, "0")}`;
 
   const [todasMovimentacoes, setTodasMovimentacoes] = useState([]);
   const [dataSelecionada, setDataSelecionada] = useState(hoje);

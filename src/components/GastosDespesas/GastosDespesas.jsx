@@ -145,7 +145,7 @@ export default function GastosDespesas() {
 
               <input
                 type="text"
-                placeholder="Ex: Compra de tomate"
+                placeholder="Ex: Compra de Mercadoria"
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
               />
