@@ -6,8 +6,6 @@ Projeto desenvolvido para a disciplina de Desenvolvimento em Plataformas Web.
 
 O sistema tem como objetivo auxiliar feirantes no controle financeiro básico do seu negócio, permitindo registrar vendas, gastos e acompanhar o fluxo de caixa de forma simples e organizada.
 
-A aplicação foi desenvolvida utilizando React e React Router, seguindo o modelo navegacional solicitado na atividade.
-
 ## Funcionalidades implementadas
 
 - Tela de Login
@@ -18,7 +16,6 @@ A aplicação foi desenvolvida utilizando React e React Router, seguindo o model
 - Controle de Estoque
 - Resumo do Dia
 - Resumo Semanal
-- Navegação entre páginas utilizando React Router
 
 ## Tecnologias utilizadas
 
@@ -26,10 +23,10 @@ A aplicação foi desenvolvida utilizando React e React Router, seguindo o model
 - Vite
 - React Router DOM
 - CSS
+- Firebase Authentication
+- Firebase Firestore REST / Backend HTTP configuravel
+- Gemini API para projecao de custos
 
 ## Objetivo acadêmico
 
-O projeto foi desenvolvido com foco na implementação do modelo navegacional da aplicação, simulando o fluxo de uso do sistema sem integração com banco de dados ou regras de negócio complexas.
-
-
-
+O projeto foi desenvolvido com foco na implementação do modelo navegacional da aplicação, com uma camada de dados preparada para integração com Firebase.

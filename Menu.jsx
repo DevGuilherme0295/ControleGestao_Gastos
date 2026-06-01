@@ -1,0 +1,153 @@
+.fluxo-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #242424;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  padding: 40px;
+}
+
+.fluxo-container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.fluxo-header {
+  margin-bottom: 32px;
+  color: white;
+}
+
+.fluxo-header h1 {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.fluxo-header p {
+  color: #bfbfbf;
+  margin-bottom: 16px;
+}
+
+.fluxo-filtro {
+  height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 10px;
+  background: #323232;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fluxo-vazio {
+  text-align: center;
+  color: #888;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+.tipo-entrada {
+  background: #1f7a45;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.tipo-saida {
+  background: #a33434;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.fluxo-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.fluxo-card {
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+.fluxo-card h2 {
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.fluxo-card span {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.entrada {
+  background: #1f7a3d;
+}
+
+.saida {
+  background: #b33939;
+}
+
+.saldo {
+  background: #0047d8;
+}
+
+.movimentacoes-box {
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+.movimentacoes-box h2 {
+  margin-bottom: 22px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #3d3d3d;
+}
+
+th,
+td {
+  padding: 14px;
+  text-align: left;
+}
+
+tbody tr {
+  border-bottom: 1px solid #4d4d4d;
+}
+
+.voltar-button {
+  margin-top: 28px;
+  width: 220px;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.saldo-positivo {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.saldo-negativo {
+  color: #f44336;
+  font-weight: bold;
+}
