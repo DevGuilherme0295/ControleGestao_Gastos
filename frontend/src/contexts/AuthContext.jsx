@@ -1,34 +1,81 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  getDocs,
+  collection,
+  updateDoc,
+} from "firebase/firestore";
+import { auth, db } from "../services/firebase";
 
 const AuthContext = createContext(null);
 
-// Hoje valida contra localStorage.
-// Quando o backend estiver pronto, trocar o bloco de `entrar` por uma chamada fetch.
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(
-    () => JSON.parse(localStorage.getItem("usuarioLogado")) || null
-  );
+  const [usuario, setUsuario] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+
+  // Mantém o usuário logado ao recarregar a página
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const perfilDoc = await getDoc(doc(db, "usuarios", firebaseUser.uid));
+        if (perfilDoc.exists()) {
+          setUsuario({ uid: firebaseUser.uid, ...perfilDoc.data() });
+        }
+      } else {
+        setUsuario(null);
+      }
+      setCarregando(false);
+    });
+
+    return unsubscribe;
+  }, []);
 
   async function entrar(email, senha) {
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const encontrado = usuarios.find(
-      (u) => u.email === email && u.senha === senha
-    );
+    const { user } = await signInWithEmailAndPassword(auth, email, senha);
+    const perfilDoc = await getDoc(doc(db, "usuarios", user.uid));
+    setUsuario({ uid: user.uid, ...perfilDoc.data() });
+  }
 
-    if (!encontrado) throw new Error("E-mail ou senha incorretos.");
+  async function cadastrar(nome, email, senha) {
+    const { user } = await createUserWithEmailAndPassword(auth, email, senha);
 
-    localStorage.setItem("usuarioLogado", JSON.stringify(encontrado));
-    setUsuario(encontrado);
+    // Primeiro usuário cadastrado vira admin
+    const snapshot = await getDocs(collection(db, "usuarios"));
+    const isAdmin = snapshot.empty;
+
+    const perfil = { nome, email, isAdmin };
+    await setDoc(doc(db, "usuarios", user.uid), perfil);
+    setUsuario({ uid: user.uid, ...perfil });
   }
 
   async function sair() {
-    localStorage.removeItem("usuarioLogado");
+    await signOut(auth);
     setUsuario(null);
   }
 
+  async function recuperarSenha(email) {
+    await sendPasswordResetEmail(auth, email);
+  }
+
+  async function atualizarPerfil(uid, dados) {
+    await updateDoc(doc(db, "usuarios", uid), dados);
+    if (uid === usuario?.uid) {
+      setUsuario((prev) => ({ ...prev, ...dados }));
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ usuario, entrar, sair }}>
-      {children}
+    <AuthContext.Provider value={{ usuario, carregando, entrar, cadastrar, sair, recuperarSenha, atualizarPerfil }}>
+      {!carregando && children}
     </AuthContext.Provider>
   );
 }

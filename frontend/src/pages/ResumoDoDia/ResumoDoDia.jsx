@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getMovimentacoes } from "../../utils/storage";
+import { listar } from "../../services/dadosService";
 import { formatarData, formatarMoeda, getHoje } from "../../utils/formatters";
 import "./ResumoDoDia.css";
 
@@ -9,9 +9,13 @@ export default function ResumoDoDia() {
 
   const [todasMovimentacoes, setTodasMovimentacoes] = useState([]);
   const [dataSelecionada, setDataSelecionada] = useState(getHoje());
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    setTodasMovimentacoes(getMovimentacoes());
+    listar("movimentacoes").then((dados) => {
+      setTodasMovimentacoes(dados);
+      setCarregando(false);
+    });
   }, []);
 
   const movimentacoes = todasMovimentacoes.filter((m) => m.data === dataSelecionada);
@@ -57,52 +61,50 @@ export default function ResumoDoDia() {
 
         <div className="resumo-lista">
           <h2>Movimentações do dia</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Data</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {movimentacoes.length === 0 ? (
+          {carregando ? (
+            <p style={{ color: "#888", textAlign: "center", padding: "24px" }}>Carregando...</p>
+          ) : (
+            <table>
+              <thead>
                 <tr>
-                  <td colSpan="5" className="lista-vazia">
-                    Nenhuma movimentação encontrada para este dia.
-                  </td>
+                  <th>Tipo</th><th>Descrição</th><th>Valor</th><th>Data</th><th>Ação</th>
                 </tr>
-              ) : (
-                movimentacoes.map((m) => (
-                  <tr key={m.id}>
-                    <td>
-                      <span className={m.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
-                        {m.tipo}
-                      </span>
-                    </td>
-                    <td>{m.descricao}</td>
-                    <td>{formatarMoeda(m.valor)}</td>
-                    <td>{formatarData(m.data)}</td>
-                    <td>
-                      <button
-                        className="detalhes-button"
-                        onClick={() => navigate("/detalhe-venda", { state: m })}
-                      >
-                        Ver detalhes
-                      </button>
+              </thead>
+              <tbody>
+                {movimentacoes.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="lista-vazia">
+                      Nenhuma movimentação encontrada para este dia.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  movimentacoes.map((m) => (
+                    <tr key={m.id}>
+                      <td>
+                        <span className={m.tipo === "Entrada" ? "tipo-entrada" : "tipo-saida"}>
+                          {m.tipo}
+                        </span>
+                      </td>
+                      <td>{m.descricao}</td>
+                      <td>{formatarMoeda(m.valor)}</td>
+                      <td>{formatarData(m.data)}</td>
+                      <td>
+                        <button
+                          className="detalhes-button"
+                          onClick={() => navigate("/detalhe-venda", { state: m })}
+                        >
+                          Ver detalhes
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
-        <button className="voltar-button" onClick={() => navigate("/menu")}>
-          Voltar
-        </button>
+        <button className="voltar-button" onClick={() => navigate("/menu")}>Voltar</button>
       </div>
     </div>
   );

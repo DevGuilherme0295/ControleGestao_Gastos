@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getMovimentacoes, saveMovimentacoes, getEstoque, saveEstoque } from "../../utils/storage";
+import { listar, atualizar, excluir } from "../../services/dadosService";
 import { formatarData } from "../../utils/formatters";
 import "./Detalhes.css";
 
@@ -30,46 +30,45 @@ export default function DetalheVenda() {
   const [valorEditado, setValorEditado] = useState(vendaRecebida.valor);
   const [dataEditada, setDataEditada] = useState(vendaRecebida.data);
 
-  function ajustarEstoqueEdicao(qtdAntiga, qtdNova, nomeProduto) {
+  async function ajustarEstoqueEdicao(qtdAntiga, qtdNova, nomeProduto) {
     const delta = parseFloat(qtdNova) - parseFloat(qtdAntiga);
     if (delta === 0) return true;
 
-    const estoque = getEstoque();
-    const idx = estoque.findIndex((i) => i.produto === nomeProduto);
-    if (idx === -1) return true;
+    const estoque = await listar("estoque");
+    const item = estoque.find((i) => i.produto === nomeProduto);
+    if (!item) return true;
 
-    const qtdEstoque = parseFloat(estoque[idx].quantidade) || 0;
+    const qtdEstoque = parseFloat(item.quantidade) || 0;
 
     if (delta > 0 && delta > qtdEstoque) {
-      setErro(`Estoque insuficiente para esta edição. Disponível: ${qtdEstoque} ${estoque[idx].unidade}`);
+      setErro(`Estoque insuficiente para esta edição. Disponível: ${qtdEstoque} ${item.unidade}`);
       return false;
     }
 
-    estoque[idx] = { ...estoque[idx], quantidade: qtdEstoque - delta };
-    saveEstoque(estoque);
+    await atualizar("estoque", item.id, { quantidade: qtdEstoque - delta });
     return true;
   }
 
-  function ajustarEstoqueExclusao(quantidade, nomeProduto) {
+  async function ajustarEstoqueExclusao(quantidade, nomeProduto) {
     const qtdDevolver = parseFloat(quantidade) || 0;
     if (qtdDevolver === 0) return;
 
-    const estoque = getEstoque();
-    const idx = estoque.findIndex((i) => i.produto === nomeProduto);
-    if (idx === -1) return;
+    const estoque = await listar("estoque");
+    const item = estoque.find((i) => i.produto === nomeProduto);
+    if (!item) return;
 
-    estoque[idx] = { ...estoque[idx], quantidade: parseFloat(estoque[idx].quantidade) + qtdDevolver };
-    saveEstoque(estoque);
+    await atualizar("estoque", item.id, {
+      quantidade: parseFloat(item.quantidade) + qtdDevolver,
+    });
   }
 
-  function salvarEdicao() {
+  async function salvarEdicao() {
     if (vendaAtual.tipo === "Entrada") {
-      const ok = ajustarEstoqueEdicao(vendaAtual.quantidade, quantidadeEditada, vendaAtual.produto);
+      const ok = await ajustarEstoqueEdicao(vendaAtual.quantidade, quantidadeEditada, vendaAtual.produto);
       if (!ok) return;
     }
 
-    const vendaEditada = {
-      ...vendaAtual,
+    const dadosEditados = {
       produto: produtoEditado,
       descricao: `Venda de ${produtoEditado}`,
       quantidade: quantidadeEditada,
@@ -77,21 +76,19 @@ export default function DetalheVenda() {
       data: dataEditada,
     };
 
-    saveMovimentacoes(
-      getMovimentacoes().map((m) => (m.id === vendaAtual.id ? vendaEditada : m))
-    );
+    await atualizar("movimentacoes", vendaAtual.id, dadosEditados);
 
-    setVendaAtual(vendaEditada);
+    setVendaAtual({ ...vendaAtual, ...dadosEditados });
     setErro("");
     setModalEditar(false);
   }
 
-  function excluirVenda() {
+  async function excluirVenda() {
     if (vendaAtual.tipo === "Entrada") {
-      ajustarEstoqueExclusao(vendaAtual.quantidade, vendaAtual.produto);
+      await ajustarEstoqueExclusao(vendaAtual.quantidade, vendaAtual.produto);
     }
 
-    saveMovimentacoes(getMovimentacoes().filter((m) => m.id !== vendaAtual.id));
+    await excluir("movimentacoes", vendaAtual.id);
     navigate("/resumo-dia");
   }
 
@@ -140,22 +137,10 @@ export default function DetalheVenda() {
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>Editar Movimentação</h2>
-            <div className="modal-campo">
-              <label>Produto:</label>
-              <input type="text" value={produtoEditado} onChange={(e) => setProdutoEditado(e.target.value)} />
-            </div>
-            <div className="modal-campo">
-              <label>Quantidade:</label>
-              <input type="number" value={quantidadeEditada} onChange={(e) => { setQuantidadeEditada(e.target.value); setErro(""); }} />
-            </div>
-            <div className="modal-campo">
-              <label>Valor:</label>
-              <input type="number" value={valorEditado} onChange={(e) => setValorEditado(e.target.value)} />
-            </div>
-            <div className="modal-campo">
-              <label>Data:</label>
-              <input type="date" value={dataEditada} onChange={(e) => setDataEditada(e.target.value)} />
-            </div>
+            <div className="modal-campo"><label>Produto:</label><input type="text" value={produtoEditado} onChange={(e) => setProdutoEditado(e.target.value)} /></div>
+            <div className="modal-campo"><label>Quantidade:</label><input type="number" value={quantidadeEditada} onChange={(e) => { setQuantidadeEditada(e.target.value); setErro(""); }} /></div>
+            <div className="modal-campo"><label>Valor:</label><input type="number" value={valorEditado} onChange={(e) => setValorEditado(e.target.value)} /></div>
+            <div className="modal-campo"><label>Data:</label><input type="date" value={dataEditada} onChange={(e) => setDataEditada(e.target.value)} /></div>
             {erro && <p className="erro-msg">{erro}</p>}
             <div className="modal-buttons">
               <button onClick={() => { setModalEditar(false); setErro(""); }}>Cancelar</button>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getEstoque, saveEstoque } from "../../utils/storage";
+import { listar, criar, atualizar, excluir } from "../../services/dadosService";
 import { UNIDADES } from "../../utils/constants";
 import "./Estoque.css";
 
@@ -12,6 +12,7 @@ export default function Estoque() {
   const [quantidade, setQuantidade] = useState("");
   const [unidade, setUnidade] = useState(UNIDADES[0]);
   const [estoque, setEstoque] = useState([]);
+  const [carregando, setCarregando] = useState(true);
 
   const [modalEditar, setModalEditar] = useState(false);
   const [modalExcluir, setModalExcluir] = useState(false);
@@ -23,18 +24,21 @@ export default function Estoque() {
   const [unidadeEditada, setUnidadeEditada] = useState(UNIDADES[0]);
 
   useEffect(() => {
-    setEstoque(getEstoque());
+    listar("estoque").then((dados) => {
+      setEstoque(dados);
+      setCarregando(false);
+    });
   }, []);
 
-  function registrarProduto() {
+  async function registrarProduto() {
     if (!produto || !precoUni || !quantidade) {
       alert("Preencha todos os campos.");
       return;
     }
 
-    const atualizado = [...estoque, { id: Date.now(), produto, quantidade, precoUni, unidade }];
-    saveEstoque(atualizado);
-    setEstoque(atualizado);
+    const novo = { id: Date.now(), produto, quantidade, precoUni, unidade };
+    await criar("estoque", novo);
+    setEstoque((prev) => [...prev, novo]);
 
     setProduto("");
     setQuantidade("");
@@ -51,14 +55,12 @@ export default function Estoque() {
     setModalEditar(true);
   }
 
-  function salvarEdicao() {
-    const atualizado = estoque.map((item) =>
-      item.id === produtoSelecionado.id
-        ? { ...item, produto: produtoEditado, precoUni: precoEditado, quantidade: quantidadeEditada, unidade: unidadeEditada }
-        : item
+  async function salvarEdicao() {
+    const dados = { produto: produtoEditado, precoUni: precoEditado, quantidade: quantidadeEditada, unidade: unidadeEditada };
+    await atualizar("estoque", produtoSelecionado.id, dados);
+    setEstoque((prev) =>
+      prev.map((item) => item.id === produtoSelecionado.id ? { ...item, ...dados } : item)
     );
-    saveEstoque(atualizado);
-    setEstoque(atualizado);
     setModalEditar(false);
     setProdutoSelecionado(null);
   }
@@ -68,10 +70,9 @@ export default function Estoque() {
     setModalExcluir(true);
   }
 
-  function excluirProduto() {
-    const atualizado = estoque.filter((item) => item.id !== produtoSelecionado.id);
-    saveEstoque(atualizado);
-    setEstoque(atualizado);
+  async function excluirProduto() {
+    await excluir("estoque", produtoSelecionado.id);
+    setEstoque((prev) => prev.filter((item) => item.id !== produtoSelecionado.id));
     setModalExcluir(false);
     setProdutoSelecionado(null);
   }
@@ -99,41 +100,35 @@ export default function Estoque() {
 
         <div className="estoque-lista">
           <h2>Produtos em estoque</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Quantidade</th>
-                <th>Preço Unitário</th>
-                <th>Unidade</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {estoque.length === 0 ? (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center", color: "#888", padding: "24px" }}>
-                    Nenhum produto cadastrado.
-                  </td>
-                </tr>
-              ) : (
-                estoque.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.produto}</td>
-                    <td>{item.quantidade}</td>
-                    <td>R$ {item.precoUni}</td>
-                    <td>{item.unidade}</td>
-                    <td>
-                      <div className="acoes-buttons">
-                        <button className="editar-button" onClick={() => abrirModalEditar(item)}>Editar</button>
-                        <button className="excluir-button" onClick={() => abrirModalExcluir(item)}>Excluir</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          {carregando ? (
+            <p style={{ color: "#888", textAlign: "center", padding: "24px" }}>Carregando...</p>
+          ) : (
+            <table>
+              <thead>
+                <tr><th>Produto</th><th>Quantidade</th><th>Preço Unitário</th><th>Unidade</th><th>Ações</th></tr>
+              </thead>
+              <tbody>
+                {estoque.length === 0 ? (
+                  <tr><td colSpan="5" style={{ textAlign: "center", color: "#888", padding: "24px" }}>Nenhum produto cadastrado.</td></tr>
+                ) : (
+                  estoque.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.produto}</td>
+                      <td>{item.quantidade}</td>
+                      <td>R$ {item.precoUni}</td>
+                      <td>{item.unidade}</td>
+                      <td>
+                        <div className="acoes-buttons">
+                          <button className="editar-button" onClick={() => abrirModalEditar(item)}>Editar</button>
+                          <button className="excluir-button" onClick={() => abrirModalExcluir(item)}>Excluir</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <button className="voltar-button" onClick={() => navigate("/menu")}>Voltar</button>
@@ -143,18 +138,9 @@ export default function Estoque() {
         <div className="modal-overlay">
           <div className="modal-card">
             <h2>Editar Produto</h2>
-            <div className="modal-campo">
-              <label>Nome do produto</label>
-              <input type="text" value={produtoEditado} onChange={(e) => setProdutoEditado(e.target.value)} />
-            </div>
-            <div className="modal-campo">
-              <label>Preço Unitário</label>
-              <input type="number" value={precoEditado} onChange={(e) => setPrecoEditado(e.target.value)} />
-            </div>
-            <div className="modal-campo">
-              <label>Quantidade</label>
-              <input type="number" value={quantidadeEditada} onChange={(e) => setQuantidadeEditada(e.target.value)} />
-            </div>
+            <div className="modal-campo"><label>Nome do produto</label><input type="text" value={produtoEditado} onChange={(e) => setProdutoEditado(e.target.value)} /></div>
+            <div className="modal-campo"><label>Preço Unitário</label><input type="number" value={precoEditado} onChange={(e) => setPrecoEditado(e.target.value)} /></div>
+            <div className="modal-campo"><label>Quantidade</label><input type="number" value={quantidadeEditada} onChange={(e) => setQuantidadeEditada(e.target.value)} /></div>
             <div className="modal-campo">
               <label>Unidade</label>
               <select value={unidadeEditada} onChange={(e) => setUnidadeEditada(e.target.value)}>

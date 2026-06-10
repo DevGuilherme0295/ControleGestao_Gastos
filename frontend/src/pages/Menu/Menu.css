@@ -1,7 +1,13 @@
-.logout-icon-button {
+.menu-top-buttons {
   position: absolute;
   top: 40px;
   right: 50px;
+  display: flex;
+  gap: 12px;
+}
+
+.logout-icon-button,
+.admin-icon-button {
   width: 60px;
   height: 60px;
   border: none;
@@ -14,15 +20,10 @@
   transition: 0.3s;
 }
 
-.logout-icon-button:hover {
+.logout-icon-button:hover,
+.admin-icon-button:hover {
   background: #3d3d3d;
   transform: scale(1.05);
-}
-
-.logout-icon-button img {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
 }
 
 .menu-page {
@@ -43,29 +44,38 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: 250px 250px;
+  grid-template-columns: repeat(3, 250px);
   gap: 24px;
 }
 
 .menu-card {
   width: 250px;
   height: 180px;
-
   border: none;
   border-radius: 18px;
-
   background: #323232;
   color: white;
-
   font-size: 20px;
   font-weight: bold;
-
   cursor: pointer;
-
   transition: 0.3s;
 }
 
 .menu-card:hover {
   background: #3f3f3f;
   transform: translateY(-5px);
+}
+
+/* Card especial da IA — ocupa a posição central da 3ª linha */
+.menu-card-ia {
+  grid-column: 2 / 3;
+  background: linear-gradient(135deg, #3b1f6e, #1e1b4b);
+  border: 1px solid #5b21b6;
+  font-size: 18px;
+}
+
+.menu-card-ia:hover {
+  background: linear-gradient(135deg, #4c2a9e, #2d2060);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
 }

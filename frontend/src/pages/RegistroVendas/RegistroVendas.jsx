@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getEstoque, saveEstoque, getMovimentacoes, saveMovimentacoes } from "../../utils/storage";
+import { listar, criar, atualizar } from "../../services/dadosService";
 import { UNIDADES, FORMAS_PAGAMENTO } from "../../utils/constants";
 import { getHoje } from "../../utils/formatters";
 import "./RegistroVendas.css";
@@ -17,16 +17,16 @@ export default function RegistroVendas() {
   const [pagamento, setPagamento] = useState(FORMAS_PAGAMENTO[0]);
   const [data, setData] = useState(getHoje());
   const [erro, setErro] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
-    setEstoqueItens(getEstoque());
+    listar("estoque").then(setEstoqueItens);
   }, []);
 
   function handleSelecionarProduto(e) {
     const val = e.target.value;
     setProduto(val);
     setErro("");
-
     const item = estoqueItens.find((i) => i.produto === val);
     if (item) setUnidade(item.unidade);
   }
@@ -34,7 +34,7 @@ export default function RegistroVendas() {
   const itemSelecionado = estoqueItens.find((i) => i.produto === produto);
   const nomeProdutoFinal = produto === "outro" ? produtoManual : produto;
 
-  function registrarVenda() {
+  async function registrarVenda() {
     if (!nomeProdutoFinal || !quantidade || !valor || !data) {
       setErro("Preencha todos os campos obrigatórios.");
       return;
@@ -44,33 +44,32 @@ export default function RegistroVendas() {
 
     if (produto !== "outro" && itemSelecionado) {
       const qtdEstoque = parseFloat(itemSelecionado.quantidade);
-
       if (qtdVendida > qtdEstoque) {
         setErro(`Estoque insuficiente. Disponível: ${qtdEstoque} ${itemSelecionado.unidade}`);
         return;
       }
 
-      const estoqueAtualizado = estoqueItens.map((i) =>
-        i.id === itemSelecionado.id ? { ...i, quantidade: qtdEstoque - qtdVendida } : i
+      setSalvando(true);
+      const novaQtd = qtdEstoque - qtdVendida;
+      await atualizar("estoque", itemSelecionado.id, { quantidade: novaQtd });
+      setEstoqueItens((prev) =>
+        prev.map((i) => i.id === itemSelecionado.id ? { ...i, quantidade: novaQtd } : i)
       );
-      saveEstoque(estoqueAtualizado);
-      setEstoqueItens(estoqueAtualizado);
+    } else {
+      setSalvando(true);
     }
 
-    saveMovimentacoes([
-      ...getMovimentacoes(),
-      {
-        id: Date.now(),
-        tipo: "Entrada",
-        produto: nomeProdutoFinal,
-        descricao: `Venda de ${nomeProdutoFinal}`,
-        quantidade,
-        unidade,
-        valor,
-        pagamento,
-        data,
-      },
-    ]);
+    await criar("movimentacoes", {
+      id: Date.now(),
+      tipo: "Entrada",
+      produto: nomeProdutoFinal,
+      descricao: `Venda de ${nomeProdutoFinal}`,
+      quantidade,
+      unidade,
+      valor,
+      pagamento,
+      data,
+    });
 
     alert("Venda registrada com sucesso!");
     setErro("");
@@ -81,6 +80,7 @@ export default function RegistroVendas() {
     setValor("");
     setPagamento(FORMAS_PAGAMENTO[0]);
     setData(getHoje());
+    setSalvando(false);
   }
 
   return (
@@ -156,7 +156,9 @@ export default function RegistroVendas() {
 
           <div className="vendas-buttons">
             <button type="button" onClick={() => navigate("/menu")}>Voltar</button>
-            <button type="button" onClick={registrarVenda}>Registrar Venda</button>
+            <button type="button" onClick={registrarVenda} disabled={salvando}>
+              {salvando ? "Registrando..." : "Registrar Venda"}
+            </button>
           </div>
         </form>
       </div>

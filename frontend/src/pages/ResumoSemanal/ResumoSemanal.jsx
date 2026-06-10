@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getMovimentacoes } from "../../utils/storage";
+import { listar } from "../../services/dadosService";
 import { formatarMoeda } from "../../utils/formatters";
 import { DIAS_SEMANA } from "../../utils/constants";
 import "./ResumoSemanal.css";
@@ -32,7 +32,7 @@ export default function ResumoSemanal() {
   const [todasMovimentacoes, setTodasMovimentacoes] = useState([]);
 
   useEffect(() => {
-    setTodasMovimentacoes(getMovimentacoes());
+    listar("movimentacoes").then(setTodasMovimentacoes);
   }, []);
 
   const { inicio, fim } = getIntervaloSemana(offsetSemana);
@@ -49,17 +49,14 @@ export default function ResumoSemanal() {
   const totalSaidas = saidas.reduce((acc, m) => acc + Number(m.valor), 0);
   const lucroSemanal = totalEntradas - totalSaidas;
 
-  // Produto mais vendido (por quantidade)
   const produtosMap = {};
   entradas.forEach((m) => {
     const chave = m.produto || m.descricao;
     if (!produtosMap[chave]) produtosMap[chave] = { quantidade: 0, unidade: m.unidade || "" };
     produtosMap[chave].quantidade += Number(m.quantidade) || 0;
   });
-  const produtoMaisVendido = Object.entries(produtosMap)
-    .sort((a, b) => b[1].quantidade - a[1].quantidade)[0];
+  const produtoMaisVendido = Object.entries(produtosMap).sort((a, b) => b[1].quantidade - a[1].quantidade)[0];
 
-  // Maior receita diária
   const receitaPorDia = {};
   entradas.forEach((m) => {
     receitaPorDia[m.data] = (receitaPorDia[m.data] || 0) + Number(m.valor);
@@ -69,7 +66,6 @@ export default function ResumoSemanal() {
     ? { nome: DIAS_SEMANA[new Date(melhorDiaEntry[0] + "T00:00:00").getDay()], valor: melhorDiaEntry[1] }
     : null;
 
-  // Maior gasto por categoria
   const gastosMap = {};
   saidas.forEach((m) => {
     const cat = m.categoria || "Outros";
@@ -99,18 +95,9 @@ export default function ResumoSemanal() {
         </div>
 
         <div className="semanal-cards">
-          <div className="semanal-card entrada">
-            <h2>Total de Entradas</h2>
-            <span>{formatarMoeda(totalEntradas)}</span>
-          </div>
-          <div className="semanal-card saida">
-            <h2>Total de Saídas</h2>
-            <span>{formatarMoeda(totalSaidas)}</span>
-          </div>
-          <div className="semanal-card saldo">
-            <h2>Lucro Semanal</h2>
-            <span>{formatarMoeda(lucroSemanal)}</span>
-          </div>
+          <div className="semanal-card entrada"><h2>Total de Entradas</h2><span>{formatarMoeda(totalEntradas)}</span></div>
+          <div className="semanal-card saida"><h2>Total de Saídas</h2><span>{formatarMoeda(totalSaidas)}</span></div>
+          <div className="semanal-card saldo"><h2>Lucro Semanal</h2><span>{formatarMoeda(lucroSemanal)}</span></div>
         </div>
 
         {movimentacoesSemana.length === 0 ? (
@@ -120,35 +107,20 @@ export default function ResumoSemanal() {
             <div className="info-box">
               <h2>Produto Mais Vendido</h2>
               {produtoMaisVendido ? (
-                <>
-                  <span>{produtoMaisVendido[0]}</span>
-                  <p>{produtoMaisVendido[1].quantidade} {produtoMaisVendido[1].unidade} vendidos na semana</p>
-                </>
-              ) : (
-                <span className="sem-info">—</span>
-              )}
+                <><span>{produtoMaisVendido[0]}</span><p>{produtoMaisVendido[1].quantidade} {produtoMaisVendido[1].unidade} vendidos na semana</p></>
+              ) : <span className="sem-info">—</span>}
             </div>
             <div className="info-box">
               <h2>Maior Receita Diária</h2>
               {melhorDia ? (
-                <>
-                  <span>{formatarMoeda(melhorDia.valor)}</span>
-                  <p>{melhorDia.nome}</p>
-                </>
-              ) : (
-                <span className="sem-info">—</span>
-              )}
+                <><span>{formatarMoeda(melhorDia.valor)}</span><p>{melhorDia.nome}</p></>
+              ) : <span className="sem-info">—</span>}
             </div>
             <div className="info-box">
               <h2>Maior Gasto</h2>
               {maiorGasto ? (
-                <>
-                  <span>{maiorGasto[0]}</span>
-                  <p>{formatarMoeda(maiorGasto[1])}</p>
-                </>
-              ) : (
-                <span className="sem-info">—</span>
-              )}
+                <><span>{maiorGasto[0]}</span><p>{formatarMoeda(maiorGasto[1])}</p></>
+              ) : <span className="sem-info">—</span>}
             </div>
           </div>
         )}

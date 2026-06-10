@@ -1,0 +1,188 @@
+.admin-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #242424;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: Arial, sans-serif;
+  padding: 40px;
+}
+
+.admin-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  color: white;
+}
+
+.admin-header h1 {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.admin-header p {
+  color: #bfbfbf;
+}
+
+.admin-tabela {
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #3d3d3d;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+}
+
+tbody tr {
+  border-bottom: 1px solid #4d4d4d;
+}
+
+.admin-vazio {
+  text-align: center;
+  color: #888;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+.badge-admin {
+  background: #0047d8;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge-user {
+  background: #444;
+  color: #ccc;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.editar-button {
+  height: 34px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #0047d8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editar-button:hover:not(:disabled) {
+  background: #0b5cff;
+}
+
+.editar-button:disabled {
+  background: #444;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.voltar-button {
+  height: 42px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px;
+  background: #555;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Modal reutiliza os estilos globais — apenas garante que modal-campo e modal-buttons existam */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: 420px;
+  background: #323232;
+  padding: 28px;
+  border-radius: 18px;
+  color: white;
+}
+
+.modal-card h2 {
+  margin-bottom: 20px;
+}
+
+.modal-campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.modal-campo label {
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.modal-campo input {
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background: #555;
+}
+
+.modal-buttons button:last-child {
+  background: #0047d8;
+}
+
+.erro-msg {
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}

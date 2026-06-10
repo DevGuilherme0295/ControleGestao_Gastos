@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUsuarios, saveUsuarios } from "../../utils/storage";
+import { useAuth } from "../../contexts/AuthContext";
 import "./Cadastro.css";
 
 export default function Cadastro() {
   const navigate = useNavigate();
+  const { cadastrar } = useAuth();
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
-  function cadastrar() {
+  async function handleCadastrar() {
     if (!nome || !email || !senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
       return;
@@ -28,15 +30,19 @@ export default function Cadastro() {
       return;
     }
 
-    const usuarios = getUsuarios();
-
-    if (usuarios.some((u) => u.email === email)) {
-      setErro("Já existe uma conta com esse e-mail.");
-      return;
+    setCarregando(true);
+    try {
+      await cadastrar(nome, email, senha);
+      navigate("/menu");
+    } catch (e) {
+      if (e.code === "auth/email-already-in-use") {
+        setErro("Já existe uma conta com esse e-mail.");
+      } else {
+        setErro("Erro ao criar conta. Tente novamente.");
+      }
+    } finally {
+      setCarregando(false);
     }
-
-    saveUsuarios([...usuarios, { id: Date.now(), nome, email, senha }]);
-    navigate("/menu");
   }
 
   return (
@@ -82,7 +88,9 @@ export default function Cadastro() {
 
           <div className="cadastro-buttons">
             <button type="button" onClick={() => navigate("/")}>Voltar</button>
-            <button type="button" onClick={cadastrar}>Cadastrar</button>
+            <button type="button" onClick={handleCadastrar} disabled={carregando}>
+              {carregando ? "Cadastrando..." : "Cadastrar"}
+            </button>
           </div>
         </form>
       </div>
