@@ -1,5 +1,5 @@
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-1.5-flash";
+const MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-2.0-flash";
 
 const MESES = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -76,7 +76,7 @@ Com base nesse histórico, forneça:
 Responda em português brasileiro, de forma clara e acessível, como se estivesse conversando diretamente com o feirante. Use valores em R$ quando mencionar números.`;
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
